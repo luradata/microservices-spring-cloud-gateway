@@ -1,0 +1,15 @@
+services:
+  eureka-discovery-server:
+    build:
+      context: ./eureka-discovery-server
+      dockerfile: Dockerfile
+    image: eureka-discovery-server:latest
+    container_name: eureka-discovery-server
+    ports:
+      - 8761:8761
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
