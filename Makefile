@@ -14,6 +14,10 @@ clean:
 		docker image rm eureka-discovery-server; \
 		echo "Removed eureka-discovery-server image"; \
 	fi
+	@if docker image ls | grep -q api-gateway; then \
+		docker image rm api-gateway; \
+		echo "Removed api-gateway image"; \
+	fi
 	@echo "Cleaned up successfully!"
 
 # Docker compose commands
