@@ -1,5 +1,5 @@
 # Define required directories
-# REQUIRED_DIRS :=
+# REQUIRED_DIRS := 
 
 # Create directories
 init:
@@ -11,15 +11,15 @@ init:
 clean:
 	@echo "Cleaning up..."
 	@if docker image ls | grep -q eureka-discovery-server; then \
-		docker image rm eureka-discovery-server; \
+		docker image rm microservices-spring-cloud-gateway-eureka-discovery-server; \
 		echo "Removed eureka-discovery-server image"; \
 	fi
 	@if docker image ls | grep -q api-gateway; then \
-		docker image rm api-gateway; \
+		docker image rm microservices-spring-cloud-gateway-api-gateway; \
 		echo "Removed api-gateway image"; \
 	fi
 	@if docker image ls | grep -q user-service; then \
-		docker image rm user-service; \
+		docker image rm microservices-spring-cloud-gateway-user-service; \
 		echo "Removed user-service image"; \
 	fi
 	@echo "Cleaned up successfully!"
