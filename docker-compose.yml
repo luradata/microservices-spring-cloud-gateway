@@ -23,6 +23,19 @@ services:
     depends_on:
       - eureka-discovery-server
 
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    image: user-service:latest
+    container_name: user-service
+    ports:
+      - 8081:8080
+    networks:
+      - microservices-network
+    depends_on:
+      - eureka-discovery-server
+
 networks:
   microservices-network:
     driver: bridge

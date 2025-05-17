@@ -18,6 +18,10 @@ clean:
 		docker image rm api-gateway; \
 		echo "Removed api-gateway image"; \
 	fi
+	@if docker image ls | grep -q user-service; then \
+		docker image rm user-service; \
+		echo "Removed user-service image"; \
+	fi
 	@echo "Cleaned up successfully!"
 
 # Docker compose commands
