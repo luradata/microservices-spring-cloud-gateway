@@ -22,6 +22,10 @@ clean:
 		docker image rm microservices-spring-cloud-gateway-user-service; \
 		echo "Removed user-service image"; \
 	fi
+	@if docker image ls | grep -q book-service; then \
+		docker image rm microservices-spring-cloud-gateway-book-service; \
+		echo "Removed book-service image"; \
+	fi
 	@echo "Cleaned up successfully!"
 
 # Docker compose commands

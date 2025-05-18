@@ -14,6 +14,9 @@ public class GatewayConfiguration {
             .route("user-service", r -> r.path("/user/**")
                 .filters(f -> f.stripPrefix(1))
                 .uri("lb://user-service"))
+            .route("book-service", r -> r.path("/book/**")
+                .filters(f -> f.stripPrefix(1))
+                .uri("lb://book-service"))
             .build();
     }
 }
