@@ -1,6 +1,74 @@
 # Microservices with Spring Boot and Spring Cloud Gateway
 
-This project demonstrates a microservices architecture using Spring Boot and Spring Cloud Gateway. It includes service discovery with Eureka, an API Gateway, and a User Service.
+This project demonstrates a microservices architecture using Spring Boot and Spring Cloud Gateway. It includes service discovery with Eureka, an API Gateway, and microservices with gRPC communication.
+
+## High-Level System Design
+
+### System Architecture
+```mermaid
+graph TB
+    Client[Client] --> |HTTP| Gateway[API Gateway]
+    Gateway --> |HTTP| BookService[Book Service]
+    Gateway --> |HTTP| UserService[User Service]
+    BookService --> |gRPC| UserService
+    BookService --> |Register| Eureka[Eureka Server]
+    UserService --> |Register| Eureka
+    Gateway --> |Discover| Eureka
+
+    subgraph "Service Discovery"
+        Eureka
+    end
+
+    subgraph "API Layer"
+        Gateway
+    end
+
+    subgraph "Microservices"
+        BookService
+        UserService
+    end
+```
+
+### Communication Flow
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway as API Gateway
+    participant BookService
+    participant UserService
+    participant Eureka as Eureka Server
+
+    Client->>Gateway: HTTP Request
+    Gateway->>Eureka: Service Discovery
+    Eureka-->>Gateway: Service Location
+    Gateway->>BookService: HTTP Request
+    BookService->>UserService: gRPC Request
+    UserService-->>BookService: gRPC Response
+    BookService-->>Gateway: HTTP Response
+    Gateway-->>Client: HTTP Response
+```
+
+### Service Components
+```mermaid
+graph LR
+    subgraph "Book Service"
+        BS_REST[REST API]
+        BS_GRPC[gRPC Client]
+        BS_BUS[Business Logic]
+        BS_REST --> BS_BUS
+        BS_BUS --> BS_GRPC
+    end
+
+    subgraph "User Service"
+        US_GRPC[gRPC Server]
+        US_BUS[Business Logic]
+        US_DB[(Database)]
+        US_GRPC --> US_BUS
+        US_BUS --> US_DB
+    end
+
+    BS_GRPC --> |gRPC| US_GRPC
+```
 
 ## Architecture
 
@@ -17,14 +85,36 @@ The project consists of the following components:
    - Provides a single entry point for all client requests
 
 3. **User Service** (Port: 8081)
-   - Example microservice for user management
+   - Microservice for user management
+   - Exposes gRPC endpoints for user operations
    - Registered with Eureka for service discovery
+   - gRPC server running on port 9090
+
+4. **Book Service** (Port: 8082)
+   - Microservice for book management
+   - Communicates with User Service using gRPC
+   - Exposes REST endpoints for book operations
+   - Registered with Eureka for service discovery
+
+## Communication
+
+### gRPC Communication
+- User Service acts as a gRPC server
+- Book Service acts as a gRPC client
+- Communication is done using Protocol Buffers
+- gRPC provides high-performance, type-safe communication
+
+### REST APIs
+- Book Service exposes REST endpoints for book operations
+- API Gateway routes requests to appropriate services
+- All services are accessible through the API Gateway
 
 ## Prerequisites
 
 - Docker and Docker Compose
 - Java 17 or later
 - Maven
+- Protocol Buffers compiler (protoc)
 
 ## Getting Started
 
@@ -58,7 +148,24 @@ The project consists of the following components:
 
 - Eureka Dashboard: http://localhost:8761
 - API Gateway: http://localhost:8765
-- User Service: http://localhost:8081
+- User Service REST: http://localhost:8081
+- User Service gRPC: localhost:9090
+- Book Service: http://localhost:8082
+
+## API Endpoints
+
+### Book Service
+- `GET /api/books`: Get all books
+- `GET /api/books/{id}`: Get book by ID
+- `POST /api/books`: Create a new book
+- `PUT /api/books/{id}`: Update a book
+- `DELETE /api/books/{id}`: Delete a book
+
+### User Service (gRPC)
+- `GetUser`: Get user by ID
+- `CreateUser`: Create a new user
+- `UpdateUser`: Update user information
+- `DeleteUser`: Delete a user
 
 ## Docker Network
 
